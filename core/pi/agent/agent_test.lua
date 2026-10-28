@@ -130,7 +130,8 @@ spec.test("abort from a tool stops the run after that turn", function()
   spec.eq(a.run, nil)
 end)
 
-spec.test("a tool may yield to its host when the loop runs in a coroutine", function()
+-- (a VM without coroutines, as Moss's moss-lua is, runs the loop to its end in one call: there is no yield to test)
+if coroutine then spec.test("a tool may yield to its host when the loop runs in a coroutine", function()
   local slow = { name = "slow", description = "", execute = function() return { content = coroutine.yield("waiting") } end }
   local fn = scripted({ { call("s", "slow", {}) }, { text("got it") } })
   local a = agent.new({ model = model, stream_fn = fn, tools = { slow } })
@@ -141,6 +142,6 @@ spec.test("a tool may yield to its host when the loop runs in a coroutine", func
   coroutine.resume(co, "done waiting")
   spec.eq(coroutine.status(co), "dead")
   spec.eq(a.state.messages[3].content[1].text, "done waiting")
-end)
+end) end
 
 spec.run()
