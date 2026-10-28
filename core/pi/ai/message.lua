@@ -4,7 +4,7 @@
 --               timestamp }
 --   block   = { type = "text", text } | { type = "thinking", thinking, signature? }
 --           | { type = "toolCall", id, name, arguments }
---   stopReason = "stop" | "length" | "toolUse" | "error" | "aborted"
+--   stopReason = "stop" | "length" | "toolUse" | "error" | "aborted"   (errorStatus: the HTTP status of a refused call)
 --
 -- Events (on_event(e)), as pi-ai names them: start; text_start, text_delta, text_end; thinking_start, thinking_delta,
 -- thinking_end; toolcall_start, toolcall_delta, toolcall_end; then done or error. Each carries partial, the
@@ -138,6 +138,7 @@ function B:fail(err, aborted)
   close_all(self)
   self.msg.stopReason = aborted and "aborted" or "error"
   self.msg.errorMessage = type(err) == "table" and (err.message or tostring(err)) or tostring(err)
+  if type(err) == "table" and err.status then self.msg.errorStatus = err.status end   -- a refusal (401, 402, 429) keeps its HTTP status
   self.emit({ type = "error", reason = self.msg.stopReason, error = self.msg })
   return self.msg
 end

@@ -74,6 +74,7 @@ spec.test("a refused call comes back as an error message, not a raise", function
   local msg = ai.stream(host(401, '{"error":{"message":"bad key"}}'), oa, { messages = {} }, {})
   spec.eq(msg.stopReason, "error")
   spec.ok(msg.errorMessage:find("bad key", 1, true))
+  spec.eq(msg.errorStatus, 401)
 end)
 
 spec.test("assistant tool calls and tool results go back in the OpenAI shape", function()
