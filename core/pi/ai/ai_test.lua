@@ -42,7 +42,8 @@ spec.test("an OpenAI-style stream gives text, a tool call, usage and toolUse", f
     { choices = { { delta = { content = "lo" } } } },
     { choices = { { delta = { tool_calls = { { index = 0, id = "c1", ["function"] = { name = "add", arguments = '{"a":' } } } } } } },
     { choices = { { delta = { tool_calls = { { index = 0, ["function"] = { arguments = "2}" } } } }, finish_reason = "tool_calls" } } },
-    { choices = {}, usage = { prompt_tokens = 10, completion_tokens = 4, prompt_tokens_details = { cached_tokens = 3 } } },
+    { choices = {}, usage = { prompt_tokens = 10, completion_tokens = 4, prompt_tokens_details = { cached_tokens = 3 },
+      cost = 0.0021 } },
   })
   local h, seen = host(200, body, 7), {}
   local msg = ai.stream(h, oa, { systemPrompt = "be brief", messages = { { role = "user", content = "hi" } },
@@ -55,6 +56,7 @@ spec.test("an OpenAI-style stream gives text, a tool call, usage and toolUse", f
   spec.eq(msg.usage.input, 7)
   spec.eq(msg.usage.cacheRead, 3)
   spec.eq(msg.usage.output, 4)
+  spec.eq(msg.usage.cost.total, 0.0021)   -- what OpenRouter billed
   spec.eq(seen[1], "start")
   spec.eq(seen[#seen], "done")
   spec.eq(h.req.headers.Authorization, "Bearer k")

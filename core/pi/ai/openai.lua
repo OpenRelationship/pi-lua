@@ -97,7 +97,8 @@ local stops = { stop = "stop", length = "length", tool_calls = "toolUse", functi
 
 local function usage_of(u)
   local cached = type(u.prompt_tokens_details) == "table" and u.prompt_tokens_details.cached_tokens or 0
-  return { input = (u.prompt_tokens or 0) - cached, output = u.completion_tokens or 0, cacheRead = cached }
+  return { input = (u.prompt_tokens or 0) - cached, output = u.completion_tokens or 0, cacheRead = cached,
+    billed = tonumber(u.cost) }
 end
 
 -- Stream one reply: on_event hears pi-ai's events; the final message is returned (never raised: a failure is a

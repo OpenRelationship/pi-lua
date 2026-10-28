@@ -116,6 +116,8 @@ function B:usage(u)
   end
   t.totalTokens = t.input + t.output + t.cacheRead + t.cacheWrite
   M.cost(self.model, t)
+  -- what the provider says it billed (OpenRouter's usage.cost), in place of the model's list prices
+  if type(u.billed) == "number" then t.cost.total = u.billed end
 end
 
 local function close_all(self)
