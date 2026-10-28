@@ -1,0 +1,27 @@
+load("@nomimono//rules/lua:defs.bzl", "lua_library", "lua_test")
+
+# pi's agent harness in portable Lua (README.md): the model layer, the loop, sessions, compaction, extensions.
+lua_library(
+    name = "pi",
+    srcs = glob(["**/*.lua"], exclude = ["**/*_test.lua"]),
+    prefix = "pi",
+    visibility = ["PUBLIC"],
+)
+
+lua_test(
+    name = "ai_test",
+    src = "ai/ai_test.lua",
+    deps = [":pi"],
+)
+
+lua_test(
+    name = "agent_test",
+    src = "agent/agent_test.lua",
+    deps = [":pi"],
+)
+
+lua_test(
+    name = "session_test",
+    src = "session_test.lua",
+    deps = [":pi"],
+)
