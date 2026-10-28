@@ -183,4 +183,14 @@ spec.test("send_message with nextTurn rides along with the next prompt", functio
   spec.eq(seen[1].messages[2].content[1].text, "be short")
 end)
 
+spec.test("reset_leaf starts a new root, so the conversation reads as empty", function()
+  local s = store.open({ id = counter() })
+  s:append_message({ role = "user", content = "a" })
+  s:reset_leaf()
+  spec.eq(#s:context().messages, 0)
+  s:append_message({ role = "user", content = "b" })
+  spec.eq(#s:context().messages, 1)
+  spec.eq(s:context().messages[1].content, "b")
+end)
+
 spec.run()

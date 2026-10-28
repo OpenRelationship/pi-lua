@@ -9,6 +9,7 @@
 --   s:append_compaction(summary, firstKeptEntryId, tokensBefore, details?) -> id
 --   s:append_model_change(provider, modelId)   s:append_thinking_level_change(level)   s:set_name(name)
 --   s:set_label(entryId, label?)   s:branch(entryId)   (the next entry hangs from entryId)
+--   s:reset_leaf()   (the next entry is a new root: an empty conversation)
 --   s:entries() -> all entries in file order    s:path() -> the entries from the root to the leaf
 --   s:context() -> { messages, thinkingLevel, model = { provider, modelId }? }  (what the agent resumes with)
 --
@@ -84,6 +85,9 @@ function S:branch(entry_id)
   assert(self.by_id[entry_id], "no entry " .. tostring(entry_id))
   self.leaf = entry_id
 end
+
+-- back before the first entry, as pi's resetLeaf: the next entry starts a new root, and the path is empty
+function S:reset_leaf() self.leaf = nil end
 
 function S:entries() return self.list end
 function S:get(id) return self.by_id[id] end
